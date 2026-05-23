@@ -22,8 +22,8 @@ export default async function NewExpensePage({
     .order('plate')
 
   return (
-    <div className="p-6 max-w-2xl animate-fadeIn">
-      <h1 className="font-display text-3xl font-bold tracking-wide mb-6" style={{ color: 'var(--text-primary)' }}>
+    <div className="p-6 md:p-8 max-w-2xl animate-fadeIn">
+      <h1 className="font-display text-3xl font-bold tracking-wide mb-8" style={{ color: 'var(--text-primary)' }}>
         REGISTRAR GASTO
       </h1>
       <ExpenseForm vehicles={vehicles ?? []} defaultVehicleId={params?.vehicle} userId={profile.id} />

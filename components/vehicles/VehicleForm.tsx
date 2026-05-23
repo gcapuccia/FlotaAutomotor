@@ -22,6 +22,17 @@ const STATUSES: { value: VehicleStatus; label: string }[] = [
   { value: 'baja', label: 'De Baja' },
 ]
 
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
+        {label}
+      </label>
+      {children}
+    </div>
+  )
+}
+
 interface Props {
   vehicle?: Vehicle
 }
@@ -88,15 +99,6 @@ export default function VehicleForm({ vehicle }: Props) {
       router.refresh()
     }
   }
-
-  const Field = ({ label, children, half }: { label: string; children: React.ReactNode; half?: boolean }) => (
-    <div className={half ? '' : ''}>
-      <label className="block text-sm font-medium mb-1.5" style={{ color: 'var(--text-secondary)' }}>
-        {label}
-      </label>
-      {children}
-    </div>
-  )
 
   return (
     <form onSubmit={handleSubmit} className="card p-6 space-y-5" style={{ borderTop: '2px solid var(--accent-primary)' }}>

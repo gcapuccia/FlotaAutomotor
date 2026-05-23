@@ -1,5 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
+import { Plus } from 'lucide-react'
 import DashboardStats from '@/components/dashboard/DashboardStats'
 import VehicleTable from '@/components/vehicles/VehicleTable'
 import RecentExpenses from '@/components/expenses/RecentExpenses'
@@ -15,30 +17,22 @@ export default async function DashboardPage({
 
   const params = await searchParams
 
-  // Fetch vehicles
-/*   const { data: vehicles } = await supabase
-    .from('vehicles')
-    .select('*, assigned_profile:profiles(id, full_name, email)')
-    .order('created_at', { ascending: false }) */
-    const { data: vehicles } = await supabase
-  .from('vehicles')
-  .select('*')
-  .order('created_at', { ascending: false })
+  const [{ data: profile }, { data: vehicles }, { data: monthExpenses }, { data: recentExpenses }] =
+    await Promise.all([
+      supabase.from('profiles').select('role').eq('id', user.id).single(),
+      supabase.from('vehicles').select('*').order('created_at', { ascending: false }),
+      supabase
+        .from('expenses')
+        .select('amount')
+        .gte('date', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0]),
+      supabase
+        .from('expenses')
+        .select('*, vehicle:vehicles(plate, vehicle_name, model)')
+        .order('date', { ascending: false })
+        .limit(8),
+    ])
 
-  // Fetch expenses (current month)
-  const now = new Date()
-  const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0]
-  const { data: monthExpenses } = await supabase
-    .from('expenses')
-    .select('*')
-    .gte('date', firstDay)
-
-  // Fetch recent expenses with vehicle info
-  const { data: recentExpenses } = await supabase
-    .from('expenses')
-    .select('*, vehicle:vehicles(plate, vehicle_name, model)')
-    .order('date', { ascending: false })
-    .limit(8)
+  const isAdmin = profile?.role === 'admin'
 
   const stats = {
     total: vehicles?.length ?? 0,
@@ -50,27 +44,33 @@ export default async function DashboardPage({
   }
 
   return (
-    <div className="p-6 space-y-6 animate-fadeIn">
+    <div className="animate-fadeIn space-y-8 p-6 md:p-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-8" style={{ margin: '2%' }}>
         <div>
-          <h1 className="font-display text-3xl font-bold tracking-wide" style={{ color: 'var(--text-primary)' }}>
-            DASHBOARD
-          </h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Dashboard</h2>
+          <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400 capitalize">
             {new Date().toLocaleDateString('es-AR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
         </div>
-        {params?.error === 'unauthorized' && (
-          <div className="text-sm px-3 py-2 rounded-md" style={{ background: 'rgba(239,68,68,0.1)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.2)' }}>
-            No tenés permisos para acceder a esa sección
-          </div>
-        )}
+        <div className="flex items-center gap-3" >
+          {params?.error === 'unauthorized' && (
+            <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-400">
+              No tenés permisos para esa sección
+            </p>
+          )}
+          {isAdmin && (
+            <Link href="/vehicles/new" className="btn-primary">
+              <Plus size={15} />
+              Agregar vehículo
+            </Link>
+          )}
+        </div>
       </div>
 
       <DashboardStats stats={stats} />
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-3" style={{ margin: '1%' }}>
         <div className="xl:col-span-2">
           <VehicleTable vehicles={vehicles ?? []} />
         </div>

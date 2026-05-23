@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Rajdhani, IBM_Plex_Sans } from 'next/font/google'
 import './globals.css'
+import { Providers } from './providers'
 
 const rajdhani = Rajdhani({
   subsets: ['latin'],
@@ -25,8 +26,10 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es" className={`${rajdhani.variable} ${ibmPlex.variable}`}>
-      <body className="font-body antialiased">{children}</body>
+    <html lang="es" suppressHydrationWarning className={`${rajdhani.variable} ${ibmPlex.variable}`}>
+      <body className="font-body antialiased bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-slate-100">
+        <Providers>{children}</Providers>
+      </body>
     </html>
   )
 }

@@ -45,14 +45,14 @@ const { data: vehicle } = await supabase
   const status = STATUS_MAP[vehicle.status] ?? { label: vehicle.status, cls: '' }
 
   return (
-    <div className="p-6 animate-fadeIn">
+    <div className="p-6 md:p-8 animate-fadeIn">
       {/* Back */}
-      <Link href="/vehicles" className="flex items-center gap-2 mb-4 text-sm" style={{ color: 'var(--text-muted)' }}>
+      <Link href="/vehicles" className="flex items-center gap-2 mb-6 text-sm" style={{ color: 'var(--text-muted)' }}>
         <ArrowLeft size={14} /> Volver a vehículos
       </Link>
 
       {/* Header */}
-      <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
+      <div className="flex flex-wrap items-start justify-between gap-4 mb-8">
         <div>
           <div className="flex items-center gap-3 mb-1">
             <h1 className="font-display text-4xl font-bold tracking-widest" style={{ color: 'var(--accent-primary)' }}>

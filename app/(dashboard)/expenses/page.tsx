@@ -26,8 +26,8 @@ export default async function ExpensesPage({
   const { data: expenses } = await query
 
   return (
-    <div className="p-6 animate-fadeIn">
-      <div className="flex items-center justify-between mb-6">
+    <div className="p-6 md:p-8 animate-fadeIn">
+      <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="font-display text-3xl font-bold tracking-wide" style={{ color: 'var(--text-primary)' }}>
             GASTOS

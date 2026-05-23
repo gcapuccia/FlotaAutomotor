@@ -16,7 +16,7 @@ export default async function AdminUsersPage() {
     .order('created_at', { ascending: false })
 
   return (
-    <div className="p-6 animate-fadeIn">
+    <div className="p-6 md:p-8 animate-fadeIn">
       <div className="mb-6">
         <h1 className="font-display text-3xl font-bold tracking-wide" style={{ color: 'var(--text-primary)' }}>
           USUARIOS
