@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { deleteFromR2 } from '@/lib/r2'
+import { deleteFile } from '@/lib/storage'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function DELETE(
@@ -18,9 +18,9 @@ export async function DELETE(
 
   if (key) {
     try {
-      await deleteFromR2(key)
+      await deleteFile(key)
     } catch (err) {
-      console.error('R2 delete error:', err)
+      console.error('Storage delete error:', err)
     }
   }
 

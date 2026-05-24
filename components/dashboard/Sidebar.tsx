@@ -63,7 +63,7 @@ export default function Sidebar({ profile, isOpen, onClose }: SidebarProps) {
       <div className="flex items-center justify-between border-b border-slate-200/80 px-5 py-5 dark:border-slate-800/60">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-md bg-orange-500 text-white">
-            <Car size={18} />
+            <Car size={30} />
           </div>
           <span className="brand-title text-slate-900 dark:text-slate-100">
             FleetOps
@@ -75,16 +75,16 @@ export default function Sidebar({ profile, isOpen, onClose }: SidebarProps) {
           className="btn-close-sidebar lg:hidden"
           aria-label="Cerrar menú"
         >
-          <X size={18} />
+          <X size={25} />
         </button>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 overflow-y-auto px-2 py-3">
+      <nav className="flex-1 overflow-y-auto px-2 py-4">
         <p className="mb-1.5 px-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
           Principal
         </p>
-        <div className="space-y-0.5">
+        <div className="space-y-1.5">
           {navItems.map(({ href, label, icon: Icon }) => (
             <Link
               key={href}
@@ -92,7 +92,7 @@ export default function Sidebar({ profile, isOpen, onClose }: SidebarProps) {
               onClick={onClose}
               className={`sidebar-link ${isActive(href) ? 'active' : ''}`}
             >
-              <Icon size={16} />
+              <Icon size={30} />
               <span>{label}</span>
             </Link>
           ))}
@@ -103,7 +103,7 @@ export default function Sidebar({ profile, isOpen, onClose }: SidebarProps) {
             <p className="mb-1.5 mt-5 px-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
               Admin
             </p>
-            <div className="space-y-0.5">
+            <div className="space-y-1.5">
               {adminItems.map(({ href, label, icon: Icon }) => (
                 <Link
                   key={href}
@@ -111,7 +111,7 @@ export default function Sidebar({ profile, isOpen, onClose }: SidebarProps) {
                   onClick={onClose}
                   className={`sidebar-link ${isActive(href) ? 'active' : ''}`}
                 >
-                  <Icon size={16} />
+                  <Icon size={30} />
                   <span>{label}</span>
                 </Link>
               ))}
@@ -141,9 +141,17 @@ export default function Sidebar({ profile, isOpen, onClose }: SidebarProps) {
           onClick={handleLogout}
           className="sidebar-link w-full text-red-500 hover:bg-red-50 hover:text-red-600 dark:text-red-400 dark:hover:bg-red-500/10 dark:hover:text-red-400"
         >
-          <LogOut size={15} />
+          <LogOut size={30} />
           <span>Cerrar sesión</span>
         </button>
+        <a
+          href="mailto:guidoca_94@hotmail.com"
+          className="mt-2 flex w-full items-center justify-center rounded-md py-1.5 text-[11px] text-slate-400 transition-colors hover:text-orange-500 dark:text-slate-600 dark:hover:text-orange-400"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          by Guido Capucciati
+        </a>
       </div>
     </aside>
   )

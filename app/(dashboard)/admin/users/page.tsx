@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import AdminUsersClient from '@/components/admin/AdminUsersClient'
+import PageHeader from '@/components/ui/PageHeader'
 
 export default async function AdminUsersPage() {
   const supabase = await createClient()
@@ -17,14 +18,10 @@ export default async function AdminUsersPage() {
 
   return (
     <div className="p-6 md:p-8 animate-fadeIn">
-      <div className="mb-6">
-        <h1 className="font-display text-3xl font-bold tracking-wide" style={{ color: 'var(--text-primary)' }}>
-          USUARIOS
-        </h1>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
-          Gestión de accesos al sistema
-        </p>
-      </div>
+      <PageHeader
+        title="USUARIOS"
+        subtitle="Gestión de accesos al sistema"
+      />
       <AdminUsersClient users={users ?? []} />
     </div>
   )

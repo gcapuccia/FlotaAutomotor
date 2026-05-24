@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { getPresignedDownloadUrl } from '@/lib/r2'
+import { getSignedUrl } from '@/lib/storage'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest) {
@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
   if (!key) return NextResponse.json({ error: 'Key requerida' }, { status: 400 })
 
   try {
-    const url = await getPresignedDownloadUrl(key)
+    const url = await getSignedUrl(key)
     return NextResponse.json({ url })
   } catch (err) {
     console.error('Download error:', err)

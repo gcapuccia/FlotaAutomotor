@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import ExpensesTable from '@/components/expenses/ExpensesTable'
+import PageHeader from '@/components/ui/PageHeader'
 
 export default async function ExpensesPage({
   searchParams,
@@ -27,21 +28,15 @@ export default async function ExpensesPage({
 
   return (
     <div className="p-6 md:p-8 animate-fadeIn">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="font-display text-3xl font-bold tracking-wide" style={{ color: 'var(--text-primary)' }}>
-            GASTOS
-          </h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
-            {expenses?.length ?? 0} registros
-          </p>
-        </div>
-        {isAdmin && (
-          <Link href="/expenses/new" className="btn-primary flex items-center gap-2">
+      <PageHeader
+        title="GASTOS"
+        subtitle={`${expenses?.length ?? 0} registros`}
+        action={isAdmin ? (
+          <Link href="/expenses/new" className="btn-primary">
             + Nuevo Gasto
           </Link>
-        )}
-      </div>
+        ) : undefined}
+      />
       <ExpensesTable expenses={expenses ?? []} isAdmin={isAdmin} />
     </div>
   )

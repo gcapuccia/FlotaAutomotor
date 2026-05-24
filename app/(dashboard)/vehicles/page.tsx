@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import VehiclesTable from '@/components/vehicles/VehiclesTable'
+import PageHeader from '@/components/ui/PageHeader'
 
 export default async function VehiclesPage() {
   const supabase = await createClient()
@@ -18,21 +19,15 @@ export default async function VehiclesPage() {
 
   return (
     <div className="p-6 md:p-8 animate-fadeIn">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="font-display text-3xl font-bold tracking-wide" style={{ color: 'var(--text-primary)' }}>
-            VEHÍCULOS
-          </h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
-            {vehicles?.length ?? 0} vehículos registrados
-          </p>
-        </div>
-        {isAdmin && (
-          <Link href="/vehicles/new" className="btn-primary flex items-center gap-2">
+      <PageHeader
+        title="VEHÍCULOS"
+        subtitle={`${vehicles?.length ?? 0} vehículos registrados`}
+        action={isAdmin ? (
+          <Link href="/vehicles/new" className="btn-primary">
             + Nuevo Vehículo
           </Link>
-        )}
-      </div>
+        ) : undefined}
+      />
       <VehiclesTable vehicles={vehicles ?? []} isAdmin={isAdmin} />
     </div>
   )

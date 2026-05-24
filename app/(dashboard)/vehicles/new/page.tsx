@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import VehicleForm from '@/components/vehicles/VehicleForm'
+import PageHeader from '@/components/ui/PageHeader'
 
 export default async function NewVehiclePage() {
   const supabase = await createClient()
@@ -12,9 +13,7 @@ export default async function NewVehiclePage() {
 
   return (
     <div className="p-6 md:p-8 max-w-2xl animate-fadeIn">
-      <h1 className="font-display text-3xl font-bold tracking-wide mb-8" style={{ color: 'var(--text-primary)' }}>
-        NUEVO VEHÍCULO
-      </h1>
+      <PageHeader title="NUEVO VEHÍCULO" />
       <VehicleForm />
     </div>
   )

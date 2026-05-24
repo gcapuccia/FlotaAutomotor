@@ -3,13 +3,11 @@
 import { useState, useMemo } from "react";
 import Pagination from "@/components/ui/Pagination";
 import Link from "next/link";
-import { Search, Wrench, AlertTriangle, Clock, CheckCircle } from "lucide-react";
+import { Search, Wrench, AlertTriangle, Clock, CheckCircle, ChevronUp, ChevronDown, ArrowUpDown } from "lucide-react";
 import type { Vehicle } from "@/types";
 import * as XLSX from "xlsx";
 
-// Captured once at module load — safe to use in useMemo
 const TODAY_MS = Date.now();
-
 const PAGE_SIZE = 12;
 
 const STATUS_MAP: Record<string, { label: string; cls: string }> = {
@@ -54,30 +52,47 @@ function VtvBadge({ vtv }: { vtv: string | null }) {
 
 const TYPES = ["todos", "sedan", "suv", "pickup", "van", "truck", "motorcycle", "otro"];
 
-const selectStyle = {
-  background: "var(--bg-secondary)",
-  border: "1px solid var(--border)",
-  color: "var(--text-secondary)",
-  borderRadius: "6px",
-  padding: "0.4rem 0.6rem",
-  fontSize: "0.8rem",
-};
+type SortKey = "interno" | "plate" | "vehicle_name" | "model" | "titular" | "driver" | "type" | "flota" | "vtv" | "status";
+
+const COLUMNS: { key: SortKey | null; label: string }[] = [
+  { key: "interno",      label: "Int." },
+  { key: "plate",        label: "Patente" },
+  { key: "vehicle_name", label: "Vehículo" },
+  { key: "model",        label: "Modelo" },
+  { key: "titular",      label: "Titular" },
+  { key: "driver",       label: "Chofer" },
+  { key: "type",         label: "Tipo" },
+  { key: "flota",        label: "Flota" },
+  { key: "vtv",          label: "VTV" },
+  { key: "status",       label: "Estado" },
+  { key: null,           label: "" },
+];
 
 export default function VehiclesTable({ vehicles, isAdmin }: { vehicles: Vehicle[]; isAdmin: boolean }) {
-  const [search, setSearch]         = useState("");
-  const [statusFilter, setStatus]   = useState("todos");
-  const [typeFilter, setType]       = useState("todos");
-  const [vtvFilter, setVtv]         = useState("todos");
-  const [page, setPage]             = useState(1);
+  const [search, setSearch]       = useState("");
+  const [statusFilter, setStatus] = useState("todos");
+  const [typeFilter, setType]     = useState("todos");
+  const [vtvFilter, setVtv]       = useState("todos");
+  const [sortKey, setSortKey]     = useState<SortKey>("plate");
+  const [sortDir, setSortDir]     = useState<"asc" | "desc">("asc");
+  const [page, setPage]           = useState(1);
 
-  // Reset page inside each setter so we never need useEffect
-  const handleSearch = (v: string) => { setSearch(v); setPage(1); };
-  const handleStatus = (v: string) => { setStatus(v); setPage(1); };
-  const handleType   = (v: string) => { setType(v);   setPage(1); };
-  const handleVtv    = (v: string) => { setVtv(v);    setPage(1); };
+  const handleSearch  = (v: string) => { setSearch(v); setPage(1); };
+  const handleStatus  = (v: string) => { setStatus(v); setPage(1); };
+  const handleType    = (v: string) => { setType(v);   setPage(1); };
+  const handleVtv     = (v: string) => { setVtv(v);    setPage(1); };
+  const handleSortCol = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDir(d => d === "asc" ? "desc" : "asc");
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+    setPage(1);
+  };
 
   const filtered = useMemo(() => {
-    return vehicles.filter((v) => {
+    const list = vehicles.filter((v) => {
       const q = search.toLowerCase();
       const matchSearch =
         !q ||
@@ -107,7 +122,21 @@ export default function VehiclesTable({ vehicles, isAdmin }: { vehicles: Vehicle
 
       return matchSearch && matchStatus && matchType && matchVtv;
     });
-  }, [vehicles, search, statusFilter, typeFilter, vtvFilter]);
+
+    list.sort((a, b) => {
+      if (sortKey === "vtv") {
+        const ta = a.vtv ? new Date(a.vtv + "T00:00:00").getTime() : (sortDir === "asc" ? Infinity : -Infinity);
+        const tb = b.vtv ? new Date(b.vtv + "T00:00:00").getTime() : (sortDir === "asc" ? Infinity : -Infinity);
+        return sortDir === "asc" ? ta - tb : tb - ta;
+      }
+      const va = String((a as any)[sortKey] ?? "");
+      const vb = String((b as any)[sortKey] ?? "");
+      const cmp = va.localeCompare(vb, "es", { numeric: true });
+      return sortDir === "asc" ? cmp : -cmp;
+    });
+
+    return list;
+  }, [vehicles, search, statusFilter, typeFilter, vtvFilter, sortKey, sortDir]);
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const paginated  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -153,7 +182,7 @@ export default function VehiclesTable({ vehicles, isAdmin }: { vehicles: Vehicle
           />
         </div>
 
-        <select style={selectStyle} value={statusFilter} onChange={(e) => handleStatus(e.target.value)}>
+        <select className="input-select" value={statusFilter} onChange={(e) => handleStatus(e.target.value)}>
           <option value="todos">Todos los estados</option>
           <option value="activo">Activo</option>
           <option value="disponible">Disponible</option>
@@ -161,14 +190,14 @@ export default function VehiclesTable({ vehicles, isAdmin }: { vehicles: Vehicle
           <option value="baja">De Baja</option>
         </select>
 
-        <select style={selectStyle} value={typeFilter} onChange={(e) => handleType(e.target.value)}>
+        <select className="input-select" value={typeFilter} onChange={(e) => handleType(e.target.value)}>
           <option value="todos">Todos los tipos</option>
           {TYPES.filter((t) => t !== "todos").map((t) => (
             <option key={t} value={t}>{TYPE_LABELS[t]}</option>
           ))}
         </select>
 
-        <select style={selectStyle} value={vtvFilter} onChange={(e) => handleVtv(e.target.value)}>
+        <select className="input-select" value={vtvFilter} onChange={(e) => handleVtv(e.target.value)}>
           <option value="todos">Toda VTV</option>
           <option value="vencida">VTV Vencida</option>
           <option value="por_vencer">VTV por vencer</option>
@@ -195,10 +224,25 @@ export default function VehiclesTable({ vehicles, isAdmin }: { vehicles: Vehicle
         <table className="w-full text-sm">
           <thead>
             <tr style={{ borderBottom: "1px solid var(--border)" }}>
-              {["Int.", "Patente", "Vehículo", "Modelo", "Titular", "Chofer", "Tipo", "Flota", "VTV", "Estado", ""].map((h) => (
-                <th key={h} className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider"
-                  style={{ color: "var(--text-muted)" }}>
-                  {h}
+              {COLUMNS.map((col) => (
+                <th
+                  key={col.label || "actions"}
+                  className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider"
+                  style={{
+                    color: col.key && sortKey === col.key ? "var(--accent-primary)" : "var(--text-muted)",
+                    cursor: col.key ? "pointer" : undefined,
+                    userSelect: "none",
+                  }}
+                  onClick={() => col.key && handleSortCol(col.key)}
+                >
+                  <span className="inline-flex items-center gap-1">
+                    {col.label}
+                    {col.key && (
+                      sortKey === col.key
+                        ? (sortDir === "asc" ? <ChevronUp size={11} /> : <ChevronDown size={11} />)
+                        : <ArrowUpDown size={11} style={{ opacity: 0.3 }} />
+                    )}
+                  </span>
                 </th>
               ))}
             </tr>

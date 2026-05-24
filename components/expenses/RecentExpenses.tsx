@@ -19,12 +19,12 @@ type ExpenseWithVehicle = Expense & {
 
 export default function RecentExpenses({ expenses }: { expenses: ExpenseWithVehicle[] }) {
   return (
-    <div className="card" style={{ borderTop: '2px solid #a78bfa' }}>
+    <div className="card" style={{ borderTop: '2px solid var(--color-expenses)' }}>
       <div className="flex items-center justify-between px-5 py-4 border-b" style={{ borderColor: 'var(--border)' }}>
         <h2 className="font-display text-lg font-semibold tracking-wide" style={{ color: 'var(--text-primary)' }}>
           GASTOS RECIENTES
         </h2>
-        <Link href="/expenses" className="flex items-center gap-1 text-xs font-medium" style={{ color: '#a78bfa' }}>
+        <Link href="/expenses" className="flex items-center gap-1 text-xs font-medium" style={{ color: 'var(--color-expenses)' }}>
           Ver todos <ArrowRight size={13} />
         </Link>
       </div>
@@ -44,7 +44,7 @@ export default function RecentExpenses({ expenses }: { expenses: ExpenseWithVehi
                   {e.vehicle?.plate} · {new Date(e.date).toLocaleDateString('es-AR')}
                 </p>
               </div>
-              <p className="text-sm font-bold flex-shrink-0" style={{ color: '#a78bfa' }}>
+              <p className="text-sm font-bold flex-shrink-0" style={{ color: 'var(--color-expenses)' }}>
                 ${Number(e.amount).toLocaleString('es-AR')}
               </p>
             </div>

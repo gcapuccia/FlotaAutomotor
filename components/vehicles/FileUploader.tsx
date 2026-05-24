@@ -66,7 +66,7 @@ export default function FileUploader({
   }
 
   return (
-    <div className="card" style={{ borderTop: '2px solid #38bdf8' }}>
+    <div className="card" style={{ borderTop: '2px solid var(--color-files)' }}>
       <div className="px-5 py-4 border-b" style={{ borderColor: 'var(--border)' }}>
         <h3 className="font-display font-semibold tracking-wide" style={{ color: 'var(--text-primary)', fontSize: '0.85rem', textTransform: 'uppercase' }}>
           Archivos
@@ -86,13 +86,12 @@ export default function FileUploader({
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading}
-            className="w-full border-2 border-dashed rounded-lg py-4 flex flex-col items-center gap-2 text-sm transition-colors"
-            style={{ borderColor: 'var(--border-accent)', color: 'var(--text-muted)' }}
+            className="file-upload-zone"
           >
             {uploading ? (
               <><Loader2 size={18} className="animate-spin" /> Subiendo...</>
             ) : (
-              <><Upload size={18} /> Subir archivo<span className="text-xs">PDF, imagen, Excel, Word</span></>
+              <><Upload size={18} /> Subir archivo<small>PDF, imagen, Excel, Word</small></>
             )}
           </button>
           {error && <p className="text-xs mt-2" style={{ color: '#ef4444' }}>{error}</p>}
@@ -103,7 +102,7 @@ export default function FileUploader({
       <div className="divide-y" style={{ borderColor: 'var(--border)' }}>
         {files.map((f) => (
           <div key={f.id} className="px-5 py-3 flex items-center gap-3 table-row-hover">
-            <FileText size={16} style={{ color: '#38bdf8', flexShrink: 0 }} />
+            <FileText size={16} style={{ color: 'var(--color-files)', flexShrink: 0 }} />
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>{f.file_name}</p>
               <p className="text-xs" style={{ color: 'var(--text-muted)' }}>

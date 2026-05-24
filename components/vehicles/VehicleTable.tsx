@@ -21,7 +21,7 @@ function VtvBadge({ vtv, vtvStatus, diasRestantes }: {
   vtvStatus?: VtvStatus | null
   diasRestantes?: number | null
 }) {
-  if (!vtv) return <span className="text-slate-400 dark:text-slate-500">—</span>
+  if (!vtv) return <span style={{ color: 'var(--text-muted)' }}>—</span>
 
   const fecha = new Date(vtv + 'T00:00:00').toLocaleDateString('es-AR')
 
@@ -48,28 +48,25 @@ function VtvBadge({ vtv, vtvStatus, diasRestantes }: {
 
 export default function VehicleTable({ vehicles }: { vehicles: Vehicle[] }) {
   return (
-    <div className="card overflow-hidden">
-      <div className="flex flex-col gap-3 border-b border-slate-200/80 px-4 py-4 dark:border-slate-800/60 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-        <div>
-          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Flota de vehículos</h2>
-          <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">Últimos vehículos agregados</p>
-        </div>
-        <Link
-          href="/vehicles"
-          className="inline-flex items-center gap-1.5 self-start rounded-md border border-slate-200/80 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700/80 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 sm:self-auto"
-        >
-          Ver todos <ArrowRight size={12} />
+    <div className="card overflow-hidden" style={{ borderTop: '2px solid var(--accent-primary)' }}>
+      <div className="flex items-center justify-between border-b px-5 py-4" style={{ borderColor: 'var(--border)' }}>
+        <h2 className="font-display text-lg font-semibold tracking-wide" style={{ color: 'var(--text-primary)' }}>
+          FLOTA DE VEHÍCULOS
+        </h2>
+        <Link href="/vehicles" className="flex items-center gap-1 text-xs font-medium" style={{ color: 'var(--accent-primary)' }}>
+          Ver todos <ArrowRight size={13} />
         </Link>
       </div>
 
       <div className="overflow-x-auto">
         <table className="min-w-full text-left text-sm">
           <thead>
-            <tr className="border-b border-slate-200/80 dark:border-slate-800/60">
+            <tr className="border-b" style={{ borderColor: 'var(--border)' }}>
               {['Int.', 'Patente', 'Vehículo', 'Titular', 'Chofer', 'Tipo', 'Flota', 'VTV', 'Estado', ''].map((h) => (
                 <th
                   key={h}
-                  className="whitespace-nowrap px-3 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500"
+                  className="whitespace-nowrap px-3 py-2.5 text-[11px] font-semibold uppercase tracking-wider"
+                  style={{ color: 'var(--text-muted)' }}
                 >
                   {h}
                 </th>
@@ -77,23 +74,24 @@ export default function VehicleTable({ vehicles }: { vehicles: Vehicle[] }) {
             </tr>
           </thead>
           <tbody>
-            {vehicles.slice(0, 10).map((v) => {
+            {vehicles.slice(0, 3).map((v) => {
               const status = STATUS_MAP[v.status] ?? { label: v.status, cls: '' }
               return (
                 <tr
                   key={v.id}
-                  className="border-b border-slate-200/60 last:border-0 dark:border-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-800/40"
+                  className="table-row-hover border-b last:border-0"
+                  style={{ borderColor: 'var(--border)' }}
                 >
-                  <td className="px-3 py-3 text-xs tabular-nums text-slate-400 dark:text-slate-500">{v.interno ?? '—'}</td>
-                  <td className="px-3 py-3 font-semibold text-slate-900 dark:text-slate-100">{v.plate}</td>
+                  <td className="px-3 py-3 text-xs tabular-nums" style={{ color: 'var(--text-muted)' }}>{v.interno ?? '—'}</td>
+                  <td className="px-3 py-3 font-semibold" style={{ color: 'var(--accent-primary)' }}>{v.plate}</td>
                   <td className="px-3 py-3">
-                    <p className="font-medium text-slate-900 dark:text-slate-100">{v.vehicle_name}</p>
-                    <p className="text-xs text-slate-400 dark:text-slate-500">{v.model}</p>
+                    <p className="font-medium" style={{ color: 'var(--text-primary)' }}>{v.vehicle_name}</p>
+                    <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{v.model}</p>
                   </td>
-                  <td className="px-3 py-3 text-xs text-slate-500 dark:text-slate-400">{v.titular}</td>
-                  <td className="px-3 py-3 text-xs text-slate-500 dark:text-slate-400">{v.driver ?? '—'}</td>
-                  <td className="px-3 py-3 text-xs text-slate-500 dark:text-slate-400">{TYPE_LABELS[v.type] ?? v.type}</td>
-                  <td className="px-3 py-3 text-xs text-slate-500 dark:text-slate-400">{v.flota ?? '—'}</td>
+                  <td className="px-3 py-3 text-xs" style={{ color: 'var(--text-secondary)' }}>{v.titular}</td>
+                  <td className="px-3 py-3 text-xs" style={{ color: 'var(--text-secondary)' }}>{v.driver ?? '—'}</td>
+                  <td className="px-3 py-3 text-xs" style={{ color: 'var(--text-secondary)' }}>{TYPE_LABELS[v.type] ?? v.type}</td>
+                  <td className="px-3 py-3 text-xs" style={{ color: 'var(--text-secondary)' }}>{v.flota ?? '—'}</td>
                   <td className="px-3 py-3">
                     <VtvBadge vtv={v.vtv} vtvStatus={v.vtv_status} diasRestantes={v.vtv_dias_restantes} />
                   </td>
@@ -103,9 +101,10 @@ export default function VehicleTable({ vehicles }: { vehicles: Vehicle[] }) {
                   <td className="px-3 py-3">
                     <Link
                       href={`/vehicles/${v.id}`}
-                      className="inline-flex items-center gap-1 rounded-md border border-slate-200/80 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700/60 dark:text-slate-400 dark:hover:bg-slate-800"
+                      className="flex items-center gap-1 text-xs font-medium"
+                      style={{ color: 'var(--text-muted)' }}
                     >
-                      Ver
+                      Ver <ArrowRight size={11} />
                     </Link>
                   </td>
                 </tr>
@@ -113,7 +112,7 @@ export default function VehicleTable({ vehicles }: { vehicles: Vehicle[] }) {
             })}
             {vehicles.length === 0 && (
               <tr>
-                <td colSpan={10} className="px-5 py-12 text-center text-sm text-slate-400 dark:text-slate-500">
+                <td colSpan={10} className="px-5 py-12 text-center text-sm" style={{ color: 'var(--text-muted)' }}>
                   No hay vehículos registrados
                 </td>
               </tr>

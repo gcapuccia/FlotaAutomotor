@@ -84,49 +84,51 @@ const { data: vehicle } = await supabase
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Vehicle info */}
         <div className="space-y-4">
-          <div className="card p-5" style={{ borderTop: '2px solid var(--accent-primary)' }}>
-            <h3 className="font-display font-semibold tracking-wider mb-4" style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', textTransform: 'uppercase' }}>
-              Datos del Vehículo
-            </h3>
-            <dl className="space-y-3">
-              {[
-                  ['Patente',   vehicle.plate],
-                  ['Vehículo',  vehicle.vehicle_name],
-                  ['Modelo',    vehicle.model],
-                  ['Tipo',      vehicle.type],
-                  ['Titular',   vehicle.titular],
-                  ['Chofer',    vehicle.driver ?? '—'],
-                  ['Flota',     vehicle.flota ?? '—'],
-                  ['Interno',   vehicle.interno ?? '—'],
-                  ['Motor',     vehicle.motor ?? '—'],
-                  ['Chasis',    vehicle.chasis ?? '—'],
-                  ['Llave',     vehicle.llave ?? '—'],
-                  ['Título',    vehicle.titulo ?? '—'],
-                  ['VTV',       vehicle.vtv ? new Date(vehicle.vtv + 'T00:00:00').toLocaleDateString('es-AR') : '—'],
-                ].map(([label, value]) => (
-                <div key={label as string} className="flex justify-between">
-                  <dt className="text-xs" style={{ color: 'var(--text-muted)' }}>{label}</dt>
-                  <dd className="text-sm font-medium text-right" style={{ color: 'var(--text-primary)' }}>{value}</dd>
+          <div className="card overflow-hidden" style={{ borderTop: '2px solid var(--accent-primary)' }}>
+            <div className="vd-section-header">
+              <h3 className="vd-section-title font-display text-xs font-semibold uppercase tracking-wider">
+                Datos del Vehículo
+              </h3>
+            </div>
+            <div className="vd-grid">
+              {([
+                ['Patente',  vehicle.plate],
+                ['Vehículo', vehicle.vehicle_name],
+                ['Modelo',   vehicle.model],
+                ['Tipo',     vehicle.type],
+                ['Titular',  vehicle.titular],
+                ['Chofer',   vehicle.driver  ?? '—'],
+                ['Flota',    vehicle.flota   ?? '—'],
+                ['Interno',  vehicle.interno ?? '—'],
+                ['Motor',    vehicle.motor   ?? '—'],
+                ['Chasis',   vehicle.chasis  ?? '—'],
+                ['Llave',    vehicle.llave   ?? '—'],
+                ['Título',   vehicle.titulo  ?? '—'],
+                ['VTV',      vehicle.vtv ? new Date(vehicle.vtv + 'T00:00:00').toLocaleDateString('es-AR') : '—'],
+              ] as [string, string][]).map(([label, value]) => (
+                <div key={label} className="vd-cell">
+                  <p className="vd-label">{label}</p>
+                  <p className="vd-value">{value}</p>
                 </div>
               ))}
-            </dl>
+            </div>
             {vehicle.notes && (
-              <div className="mt-4 pt-4 border-t" style={{ borderColor: 'var(--border)' }}>
-                <p className="text-xs mb-1" style={{ color: 'var(--text-muted)' }}>Notas</p>
-                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{vehicle.notes}</p>
+              <div className="vd-notes">
+                <p className="vd-notes-label">Notas</p>
+                <p className="vd-notes-text">{vehicle.notes}</p>
               </div>
             )}
           </div>
 
           {/* Total expenses card */}
-          <div className="card p-5" style={{ borderTop: '2px solid #a78bfa' }}>
+          <div className="card p-5" style={{ borderTop: '2px solid var(--color-expenses)' }}>
             <div className="flex items-center gap-2 mb-2">
-              <Wrench size={14} style={{ color: '#a78bfa' }} />
+              <Wrench size={14} style={{ color: 'var(--color-expenses)' }} />
               <p className="font-display text-xs font-semibold tracking-wider uppercase" style={{ color: 'var(--text-muted)' }}>
                 Total Gastos
               </p>
             </div>
-            <p className="font-display text-3xl font-bold" style={{ color: '#a78bfa' }}>
+            <p className="font-display text-3xl font-bold" style={{ color: 'var(--color-expenses)' }}>
               ${totalExpenses.toLocaleString('es-AR')}
             </p>
             <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>

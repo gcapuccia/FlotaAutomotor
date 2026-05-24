@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { uploadToR2, generateFileKey } from '@/lib/r2'
+import { uploadFile, generateFileKey } from '@/lib/storage'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
@@ -20,16 +20,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Archivo y vehículo son requeridos' }, { status: 400 })
     }
 
-    // Validate file size (10MB max)
     if (file.size > 10 * 1024 * 1024) {
       return NextResponse.json({ error: 'El archivo no puede superar 10MB' }, { status: 400 })
     }
 
     const buffer = Buffer.from(await file.arrayBuffer())
     const fileKey = generateFileKey(vehicleId, file.name)
-    const fileUrl = await uploadToR2(fileKey, buffer, file.type)
+    await uploadFile(fileKey, buffer, file.type)
 
-    // Save metadata in Supabase
     const { data: dbFile, error: dbError } = await supabase
       .from('vehicle_files')
       .insert({
@@ -37,7 +35,7 @@ export async function POST(request: NextRequest) {
         expense_id: expenseId ?? null,
         file_name: file.name,
         file_key: fileKey,
-        file_url: fileUrl,
+        file_url: fileKey,
         file_size: file.size,
         file_type: file.type,
         uploaded_by: user.id,

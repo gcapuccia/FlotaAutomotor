@@ -3,40 +3,53 @@
 import { useState, useMemo } from "react";
 import Pagination from "@/components/ui/Pagination";
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { Search, ChevronUp, ChevronDown, ArrowUpDown } from "lucide-react";
 import * as XLSX from "xlsx";
 
 const PAGE_SIZE = 12;
 
 const CATEGORY_LABELS: Record<string, string> = {
-  combustible:  "Combustible",
-  mantenimiento:"Mantenimiento",
-  reparacion:   "Reparación",
-  seguro:       "Seguro",
-  patente:      "Patente",
-  lavado:       "Lavado",
-  neumaticos:   "Neumáticos",
-  otro:         "Otro",
+  combustible:   "Combustible",
+  mantenimiento: "Mantenimiento",
+  reparacion:    "Reparación",
+  seguro:        "Seguro",
+  patente:       "Patente",
+  lavado:        "Lavado",
+  neumaticos:    "Neumáticos",
+  otro:          "Otro",
 };
 
-const selectStyle = {
-  background: "var(--bg-secondary)",
-  border: "1px solid var(--border)",
-  color: "var(--text-secondary)",
-  borderRadius: "6px",
-  padding: "0.4rem 0.6rem",
-  fontSize: "0.8rem",
-};
+type SortKey = "date" | "plate" | "category" | "amount";
+
+const COLUMNS: { key: SortKey | null; label: string }[] = [
+  { key: "date",     label: "Fecha" },
+  { key: "plate",    label: "Vehículo" },
+  { key: "category", label: "Categoría" },
+  { key: null,       label: "Taller / Mecánico" },
+  { key: null,       label: "Descripción" },
+  { key: null,       label: "Factura" },
+  { key: "amount",   label: "Importe" },
+  { key: null,       label: "" },
+];
 
 export default function ExpensesTable({ expenses, isAdmin }: { expenses: any[]; isAdmin: boolean }) {
-  const [search, setSearch]   = useState("");
-  const [catFilter, setCat]   = useState("todos");
-  const [sortDir, setSortDir] = useState<"desc" | "asc">("desc");
-  const [page, setPage]       = useState(1);
+  const [search, setSearch] = useState("");
+  const [catFilter, setCat] = useState("todos");
+  const [sortKey, setSortKey] = useState<SortKey>("date");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const [page, setPage]     = useState(1);
 
-  const handleSearch  = (v: string) => { setSearch(v);  setPage(1); };
-  const handleCat     = (v: string) => { setCat(v);     setPage(1); };
-  const handleSort    = (v: "asc" | "desc") => { setSortDir(v); setPage(1); };
+  const handleSearch  = (v: string) => { setSearch(v); setPage(1); };
+  const handleCat     = (v: string) => { setCat(v);    setPage(1); };
+  const handleSortCol = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDir(d => d === "asc" ? "desc" : "asc");
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+    setPage(1);
+  };
 
   const filtered = useMemo(() => {
     const list = expenses.filter((e) => {
@@ -53,12 +66,21 @@ export default function ExpensesTable({ expenses, isAdmin }: { expenses: any[]; 
     });
 
     list.sort((a, b) => {
-      const diff = new Date(a.date).getTime() - new Date(b.date).getTime();
-      return sortDir === "desc" ? -diff : diff;
+      let cmp = 0;
+      if (sortKey === "date") {
+        cmp = new Date(a.date).getTime() - new Date(b.date).getTime();
+      } else if (sortKey === "plate") {
+        cmp = (a.vehicle?.plate ?? "").localeCompare(b.vehicle?.plate ?? "", "es");
+      } else if (sortKey === "category") {
+        cmp = (CATEGORY_LABELS[a.category] ?? "").localeCompare(CATEGORY_LABELS[b.category] ?? "", "es");
+      } else if (sortKey === "amount") {
+        cmp = Number(a.amount) - Number(b.amount);
+      }
+      return sortDir === "asc" ? cmp : -cmp;
     });
 
     return list;
-  }, [expenses, search, catFilter, sortDir]);
+  }, [expenses, search, catFilter, sortKey, sortDir]);
 
   const total      = filtered.reduce((sum, e) => sum + Number(e.amount), 0);
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
@@ -84,7 +106,7 @@ export default function ExpensesTable({ expenses, isAdmin }: { expenses: any[]; 
   };
 
   return (
-    <div className="card" style={{ borderTop: "2px solid #a78bfa" }}>
+    <div className="card" style={{ borderTop: "2px solid var(--color-expenses)" }}>
 
       {/* Barra de filtros */}
       <div className="flex flex-wrap items-center gap-3 border-b px-5 py-4"
@@ -101,17 +123,11 @@ export default function ExpensesTable({ expenses, isAdmin }: { expenses: any[]; 
           />
         </div>
 
-        <select style={selectStyle} value={catFilter} onChange={(e) => handleCat(e.target.value)}>
+        <select className="input-select" value={catFilter} onChange={(e) => handleCat(e.target.value)}>
           <option value="todos">Todas las categorías</option>
           {Object.entries(CATEGORY_LABELS).map(([val, label]) => (
             <option key={val} value={val}>{label}</option>
           ))}
-        </select>
-
-        <select style={selectStyle} value={sortDir}
-          onChange={(e) => handleSort(e.target.value as "asc" | "desc")}>
-          <option value="desc">Más recientes primero</option>
-          <option value="asc">Más antiguos primero</option>
         </select>
 
         <div className="ml-auto flex items-center gap-4">
@@ -119,7 +135,7 @@ export default function ExpensesTable({ expenses, isAdmin }: { expenses: any[]; 
             <p className="text-xs" style={{ color: "var(--text-muted)" }}>
               {filtered.length} registro{filtered.length !== 1 ? "s" : ""}
             </p>
-            <p className="font-display text-sm font-bold" style={{ color: "#a78bfa" }}>
+            <p className="font-display text-sm font-bold" style={{ color: "var(--color-expenses)" }}>
               Total: ${total.toLocaleString("es-AR")}
             </p>
           </div>
@@ -139,10 +155,25 @@ export default function ExpensesTable({ expenses, isAdmin }: { expenses: any[]; 
         <table className="w-full text-sm">
           <thead>
             <tr style={{ borderBottom: "1px solid var(--border)" }}>
-              {["Fecha", "Vehículo", "Categoría", "Taller / Mecánico", "Descripción", "Factura", "Importe", ""].map((h) => (
-                <th key={h} className="whitespace-nowrap px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider"
-                  style={{ color: "var(--text-muted)" }}>
-                  {h}
+              {COLUMNS.map((col) => (
+                <th
+                  key={col.label || "actions"}
+                  className="whitespace-nowrap px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider"
+                  style={{
+                    color: col.key && sortKey === col.key ? "var(--color-expenses)" : "var(--text-muted)",
+                    cursor: col.key ? "pointer" : undefined,
+                    userSelect: "none",
+                  }}
+                  onClick={() => col.key && handleSortCol(col.key)}
+                >
+                  <span className="inline-flex items-center gap-1">
+                    {col.label}
+                    {col.key && (
+                      sortKey === col.key
+                        ? (sortDir === "asc" ? <ChevronUp size={11} /> : <ChevronDown size={11} />)
+                        : <ArrowUpDown size={11} style={{ opacity: 0.3 }} />
+                    )}
+                  </span>
                 </th>
               ))}
             </tr>
@@ -181,7 +212,7 @@ export default function ExpensesTable({ expenses, isAdmin }: { expenses: any[]; 
                 <td className="px-5 py-3 text-xs" style={{ color: "var(--text-muted)" }}>
                   {e.invoice_number ?? "—"}
                 </td>
-                <td className="whitespace-nowrap px-5 py-3 font-display font-bold" style={{ color: "#a78bfa" }}>
+                <td className="whitespace-nowrap px-5 py-3 font-display font-bold" style={{ color: "var(--color-expenses)" }}>
                   ${Number(e.amount).toLocaleString("es-AR")}
                 </td>
                 <td className="px-5 py-3">

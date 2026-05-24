@@ -78,7 +78,7 @@ export default function ExpenseList({
               </div>
 
               <div className="text-right flex-shrink-0">
-                <p className="font-display font-bold text-lg" style={{ color: '#a78bfa' }}>
+                <p className="font-display font-bold text-lg" style={{ color: 'var(--color-expenses)' }}>
                   ${Number(e.amount).toLocaleString('es-AR')}
                 </p>
               </div>

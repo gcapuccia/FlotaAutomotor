@@ -1,8 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import VehicleForm from '@/components/vehicles/VehicleForm'
-import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
+import PageHeader from '@/components/ui/PageHeader'
 
 export default async function EditVehiclePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -18,12 +17,10 @@ export default async function EditVehiclePage({ params }: { params: Promise<{ id
 
   return (
     <div className="p-6 max-w-2xl animate-fadeIn">
-      <Link href={"/vehicles/" + id} className="flex items-center gap-2 mb-4 text-sm" style={{ color: 'var(--text-muted)' }}>
-        <ArrowLeft size={14} /> Volver al vehículo
-      </Link>
-      <h1 className="font-display text-3xl font-bold tracking-wide mb-6" style={{ color: 'var(--text-primary)' }}>
-        EDITAR VEHÍCULO
-      </h1>
+      <PageHeader
+        title="EDITAR VEHÍCULO"
+        back={{ href: `/vehicles/${id}`, label: 'Volver al vehículo' }}
+      />
       <VehicleForm vehicle={vehicle} />
     </div>
   )

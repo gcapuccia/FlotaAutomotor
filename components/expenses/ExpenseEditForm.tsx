@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import type { Expense, ExpenseCategory } from '@/types'
+import VehicleSelect from '@/components/ui/VehicleSelect'
 
 const CATEGORIES: { value: ExpenseCategory; label: string; showMechanic?: boolean }[] = [
   { value: 'combustible',   label: '⛽ Combustible' },
@@ -104,16 +105,15 @@ export default function ExpenseEditForm({ expense, vehicles }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="card p-6 space-y-5" style={{ borderTop: '2px solid #a78bfa' }}>
+    <form onSubmit={handleSubmit} className="card p-6 space-y-5" style={{ borderTop: '2px solid var(--color-expenses)' }}>
 
       <div className="grid grid-cols-2 gap-4">
         <Field label="Vehículo *">
-          <select className="input-base" value={form.vehicle_id} onChange={e => set('vehicle_id', e.target.value)} required>
-            <option value="">Seleccionar...</option>
-            {vehicles.map(v => (
-              <option key={v.id} value={v.id}>{v.plate} — {v.vehicle_name} {v.model}</option>
-            ))}
-          </select>
+          <VehicleSelect
+            vehicles={vehicles}
+            value={form.vehicle_id}
+            onChange={(id) => set('vehicle_id', id)}
+          />
         </Field>
         <Field label="Categoría *">
           <select className="input-base" value={form.category} onChange={e => set('category', e.target.value)}>

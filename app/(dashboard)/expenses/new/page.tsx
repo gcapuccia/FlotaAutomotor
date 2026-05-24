@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import ExpenseForm from '@/components/expenses/ExpenseForm'
+import PageHeader from '@/components/ui/PageHeader'
 
 export default async function NewExpensePage({
   searchParams,
@@ -23,9 +24,7 @@ export default async function NewExpensePage({
 
   return (
     <div className="p-6 md:p-8 max-w-2xl animate-fadeIn">
-      <h1 className="font-display text-3xl font-bold tracking-wide mb-8" style={{ color: 'var(--text-primary)' }}>
-        REGISTRAR GASTO
-      </h1>
+      <PageHeader title="REGISTRAR GASTO" />
       <ExpenseForm vehicles={vehicles ?? []} defaultVehicleId={params?.vehicle} userId={profile.id} />
     </div>
   )

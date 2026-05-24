@@ -1,6 +1,6 @@
 'use client'
 
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react'
 
 interface PaginationProps {
   page: number
@@ -40,41 +40,41 @@ export default function Pagination({
   const pages = getPages(page, totalPages)
 
   return (
-    <div className="flex flex-col items-center justify-between gap-3 border-t border-slate-200/80 px-4 py-3 dark:border-slate-800/60 sm:flex-row sm:px-5">
-      <p className="text-xs text-slate-400 dark:text-slate-500">
-        Mostrando {from}–{to} de {totalItems} registros
+    <div className="pagination-wrap">
+      <p className="pagination-info">
+        Mostrando <strong>{from}–{to}</strong> de <strong>{totalItems}</strong> registros
       </p>
 
-      <div className="flex items-center gap-1">
+      <div className="pagination-controls">
+        <button
+          type="button"
+          onClick={() => onPageChange(1)}
+          disabled={page === 1}
+          className="pagination-btn"
+          aria-label="Primera página"
+        >
+          <ChevronsLeft size={13} />
+        </button>
+
         <button
           type="button"
           onClick={() => onPageChange(page - 1)}
           disabled={page === 1}
-          className="grid h-8 w-8 place-items-center rounded-md border border-slate-200/80 text-slate-500 transition hover:bg-slate-50 hover:text-slate-900 disabled:pointer-events-none disabled:opacity-30 dark:border-slate-700/60 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+          className="pagination-btn"
           aria-label="Página anterior"
         >
-          <ChevronLeft size={15} />
+          <ChevronLeft size={13} />
         </button>
 
         {pages.map((p, i) =>
           p === '…' ? (
-            <span
-              key={`ellipsis-${i}`}
-              className="grid h-8 w-8 place-items-center text-xs text-slate-400 dark:text-slate-500"
-            >
-              …
-            </span>
+            <span key={`ellipsis-${i}`} className="pagination-ellipsis">…</span>
           ) : (
             <button
               key={p}
               type="button"
               onClick={() => onPageChange(p as number)}
-              className={[
-                'grid h-8 w-8 place-items-center rounded-md border text-xs font-medium transition',
-                p === page
-                  ? 'border-orange-300 bg-orange-500 text-white dark:border-orange-500'
-                  : 'border-slate-200/80 text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:border-slate-700/60 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100',
-              ].join(' ')}
+              className={`pagination-btn${p === page ? ' active' : ''}`}
             >
               {p}
             </button>
@@ -85,10 +85,20 @@ export default function Pagination({
           type="button"
           onClick={() => onPageChange(page + 1)}
           disabled={page === totalPages}
-          className="grid h-8 w-8 place-items-center rounded-md border border-slate-200/80 text-slate-500 transition hover:bg-slate-50 hover:text-slate-900 disabled:pointer-events-none disabled:opacity-30 dark:border-slate-700/60 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+          className="pagination-btn"
           aria-label="Página siguiente"
         >
-          <ChevronRight size={15} />
+          <ChevronRight size={13} />
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onPageChange(totalPages)}
+          disabled={page === totalPages}
+          className="pagination-btn"
+          aria-label="Última página"
+        >
+          <ChevronsRight size={13} />
         </button>
       </div>
     </div>

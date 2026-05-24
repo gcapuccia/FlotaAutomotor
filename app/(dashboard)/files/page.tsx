@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { FileText, Image, FileSpreadsheet } from 'lucide-react'
+import PageHeader from '@/components/ui/PageHeader'
 
 function getFileIcon(type: string) {
   if (type.includes('image')) return Image
@@ -26,16 +27,12 @@ export default async function FilesPage() {
 
   return (
     <div className="p-6 md:p-8 animate-fadeIn">
-      <div className="mb-6">
-        <h1 className="font-display text-3xl font-bold tracking-wide" style={{ color: 'var(--text-primary)' }}>
-          ARCHIVOS
-        </h1>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>
-          {files?.length ?? 0} archivos almacenados en Cloudflare R2
-        </p>
-      </div>
+      <PageHeader
+        title="ARCHIVOS"
+        subtitle={`${files?.length ?? 0} archivos almacenados en Cloudflare R2`}
+      />
 
-      <div className="card" style={{ borderTop: '2px solid #38bdf8' }}>
+      <div className="card" style={{ borderTop: '2px solid var(--color-files)' }}>
         <table className="w-full text-sm">
           <thead>
             <tr style={{ borderBottom: '1px solid var(--border)' }}>
@@ -53,7 +50,7 @@ export default async function FilesPage() {
                 <tr key={f.id} className="table-row-hover border-b" style={{ borderColor: 'var(--border)' }}>
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-2">
-                      <Icon size={15} style={{ color: '#38bdf8', flexShrink: 0 }} />
+                      <Icon size={15} style={{ color: 'var(--color-files)', flexShrink: 0 }} />
                       <span className="font-medium truncate max-w-[200px]" style={{ color: 'var(--text-primary)' }}>
                         {f.file_name}
                       </span>
