@@ -77,10 +77,20 @@ export default function ExpenseList({
                 </div>
               </div>
 
-              <div className="text-right flex-shrink-0">
+              <div className="text-right flex-shrink-0 flex flex-col items-end gap-2">
                 <p className="font-display font-bold text-lg" style={{ color: '#a78bfa' }}>
                   ${Number(e.amount).toLocaleString('es-AR')}
                 </p>
+                <div className="flex gap-2">
+                  <Link href={`/expenses/${e.id}`} className="btn-ghost text-xs px-2 py-1">
+                    Ver
+                  </Link>
+                  {isAdmin && (
+                    <Link href={`/expenses/${e.id}/edit`} className="btn-ghost text-xs px-2 py-1">
+                      Editar
+                    </Link>
+                  )}
+                </div>
               </div>
             </div>
           </div>

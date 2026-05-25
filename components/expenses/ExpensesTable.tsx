@@ -253,14 +253,22 @@ export default function ExpensesTable({
                   ${Number(e.amount).toLocaleString("es-AR")}
                 </td>
                 <td className="px-5 py-3">
-                  {isAdmin && (
+                  <div className="flex items-center gap-2">
                     <Link
-                      href={"/expenses/" + e.id + "/edit"}
+                      href={"/expenses/" + e.id}
                       className="btn-ghost text-xs px-3 py-1"
                     >
-                      Editar
+                      Ver
                     </Link>
-                  )}
+                    {isAdmin && (
+                      <Link
+                        href={"/expenses/" + e.id + "/edit"}
+                        className="btn-ghost text-xs px-3 py-1"
+                      >
+                        Editar
+                      </Link>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}

@@ -16,26 +16,41 @@ const CATEGORIES: { value: ExpenseCategory; label: string; showMechanic?: boolea
   { value: 'otro',          label: '📌 Otro' },
 ]
 
+interface ExistingExpense {
+  id: string
+  vehicle_id: string
+  category: ExpenseCategory
+  amount: number
+  date: string
+  description: string | null
+  mechanic_name: string | null
+  workshop_name: string | null
+  invoice_number: string | null
+  mileage_at_expense: number | null
+}
+
 interface Props {
   vehicles: { id: string; plate: string; vehicle_name: string; model: string }[]
   defaultVehicleId?: string
   userId: string
+  expense?: ExistingExpense
 }
 
-export default function ExpenseForm({ vehicles, defaultVehicleId, userId }: Props) {
+export default function ExpenseForm({ vehicles, defaultVehicleId, userId, expense }: Props) {
   const router = useRouter()
   const supabase = createClient()
+  const isEditing = !!expense
 
   const [form, setForm] = useState({
-    vehicle_id: defaultVehicleId ?? '',
-    category: 'reparacion' as ExpenseCategory,
-    amount: '',
-    date: new Date().toISOString().split('T')[0],
-    description: '',
-    mechanic_name: '',
-    workshop_name: '',
-    invoice_number: '',
-    mileage_at_expense: '',
+    vehicle_id: expense?.vehicle_id ?? defaultVehicleId ?? '',
+    category: (expense?.category ?? 'reparacion') as ExpenseCategory,
+    amount: expense?.amount?.toString() ?? '',
+    date: expense?.date ?? new Date().toISOString().split('T')[0],
+    description: expense?.description ?? '',
+    mechanic_name: expense?.mechanic_name ?? '',
+    workshop_name: expense?.workshop_name ?? '',
+    invoice_number: expense?.invoice_number ?? '',
+    mileage_at_expense: expense?.mileage_at_expense?.toString() ?? '',
   })
 
   const [loading, setLoading] = useState(false)
@@ -53,7 +68,7 @@ export default function ExpenseForm({ vehicles, defaultVehicleId, userId }: Prop
     setLoading(true)
     setError(null)
 
-    const { error } = await supabase.from('expenses').insert({
+    const payload = {
       vehicle_id: form.vehicle_id,
       category: form.category,
       amount: Number(form.amount),
@@ -63,14 +78,17 @@ export default function ExpenseForm({ vehicles, defaultVehicleId, userId }: Prop
       workshop_name: form.workshop_name || null,
       invoice_number: form.invoice_number || null,
       mileage_at_expense: form.mileage_at_expense ? Number(form.mileage_at_expense) : null,
-      created_by: userId,
-    })
+    }
+
+    const { error } = isEditing
+      ? await supabase.from('expenses').update(payload).eq('id', expense!.id)
+      : await supabase.from('expenses').insert({ ...payload, created_by: userId })
 
     if (error) {
       setError(error.message)
       setLoading(false)
     } else {
-      router.push(defaultVehicleId ? `/vehicles/${defaultVehicleId}` : '/expenses')
+      router.push(isEditing ? `/expenses/${expense!.id}` : defaultVehicleId ? `/vehicles/${defaultVehicleId}` : '/expenses')
       router.refresh()
     }
   }
@@ -152,7 +170,7 @@ export default function ExpenseForm({ vehicles, defaultVehicleId, userId }: Prop
 
       <div className="flex gap-3 pt-2">
         <button type="submit" disabled={loading} className="btn-primary flex-1">
-          {loading ? 'Guardando...' : 'Registrar Gasto'}
+          {loading ? 'Guardando...' : isEditing ? 'Guardar Cambios' : 'Registrar Gasto'}
         </button>
         <button type="button" onClick={() => router.back()} className="btn-ghost">
           Cancelar
