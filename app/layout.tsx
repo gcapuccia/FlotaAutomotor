@@ -16,7 +16,7 @@ const ibmPlex = IBM_Plex_Sans({
 })
 
 export const metadata: Metadata = {
-  title: 'FleetOps — Gestión de Flota',
+  title: 'FlotaGo — Gestión de Flota',
   description: 'Sistema de seguimiento y gestión de flota vehicular',
 }
 

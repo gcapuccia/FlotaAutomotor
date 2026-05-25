@@ -56,7 +56,7 @@ export default function DashboardShell({
                 sizes="100vw"
                 style={{ width: 'auto', height: '70px' }}
               />
-              FleetOps
+              FlotaGo
             </div>
           </div>
           <ThemeToggle />

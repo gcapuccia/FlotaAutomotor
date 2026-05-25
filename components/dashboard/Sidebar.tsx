@@ -66,14 +66,14 @@ export default function Sidebar({ profile, isOpen, onClose }: SidebarProps) {
           <div className="flex items-center gap-2">
           <Image
             src="/LogoFlota%20Sin%20Fondo.png"
-            alt="FleetOps"
+            alt="FlotaGo"
             width={0}
             height={0}
             sizes="100vw"
             style={{ width: 'auto', height: '45px' }}
           />
           <span className="brand-title text-slate-900 dark:text-slate-100">
-            FleetOps
+            FlotaGo
           </span>
         </div>
         <button

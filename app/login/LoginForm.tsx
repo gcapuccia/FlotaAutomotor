@@ -38,7 +38,7 @@ export default function LoginForm() {
         <div className="mb-8 text-center">
           <Image
             src="/Logoflota.png"
-            alt="FleetOps"
+            alt="FlotaGo"
             width={0}
             height={0}
             sizes="100vw"
@@ -46,7 +46,7 @@ export default function LoginForm() {
             style={{ width: 'auto', height: '240px' }}
           />
           <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-            FleetOps
+            FlotaGo
           </h1>
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Gestión de flota vehicular
