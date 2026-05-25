@@ -2,7 +2,12 @@
 
 import { useState, useRef } from 'react'
 import { Upload, Download, Trash2, FileText, Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
+import { confirmDelete } from '@/lib/swal'
+import Pagination from '@/components/ui/Pagination'
 import type { VehicleFile } from '@/types'
+
+const PAGE_SIZE = 10
 
 type FileWithProfile = VehicleFile & { uploaded_by_profile?: { full_name: string } | null }
 
@@ -14,17 +19,23 @@ function formatBytes(bytes: number) {
 
 export default function FileUploader({
   vehicleId,
+  plate,
   files: initialFiles,
   isAdmin,
 }: {
   vehicleId: string
+  plate: string
   files: FileWithProfile[]
   isAdmin: boolean
 }) {
   const [files, setFiles] = useState(initialFiles)
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [page, setPage] = useState(1)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const totalPages = Math.ceil(files.length / PAGE_SIZE)
+  const paginated  = files.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -35,14 +46,17 @@ export default function FileUploader({
     const formData = new FormData()
     formData.append('file', file)
     formData.append('vehicleId', vehicleId)
+    formData.append('plate', plate)
 
     const res = await fetch('/api/files/upload', { method: 'POST', body: formData })
     const data = await res.json()
 
     if (!res.ok) {
       setError(data.error ?? 'Error al subir archivo')
+      toast.error(data.error ?? 'Error al subir archivo')
     } else {
       setFiles((prev) => [data.file, ...prev])
+      toast.success('Archivo subido')
     }
 
     setUploading(false)
@@ -58,10 +72,14 @@ export default function FileUploader({
   }
 
   const handleDelete = async (fileId: string, fileKey: string) => {
-    if (!confirm('¿Eliminar este archivo?')) return
+    const { isConfirmed } = await confirmDelete({ title: '¿Eliminar archivo?' })
+    if (!isConfirmed) return
     const res = await fetch(`/api/files/${fileId}?key=${encodeURIComponent(fileKey)}`, { method: 'DELETE' })
     if (res.ok) {
       setFiles((prev) => prev.filter((f) => f.id !== fileId))
+      toast.success('Archivo eliminado')
+    } else {
+      toast.error('Error al eliminar archivo')
     }
   }
 
@@ -100,7 +118,7 @@ export default function FileUploader({
 
       {/* File list */}
       <div className="divide-y" style={{ borderColor: 'var(--border)' }}>
-        {files.map((f) => (
+        {paginated.map((f) => (
           <div key={f.id} className="px-5 py-3 flex items-center gap-3 table-row-hover">
             <FileText size={16} style={{ color: 'var(--color-files)', flexShrink: 0 }} />
             <div className="min-w-0 flex-1">
@@ -137,6 +155,14 @@ export default function FileUploader({
           </p>
         )}
       </div>
+
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        totalItems={files.length}
+        pageSize={PAGE_SIZE}
+        onPageChange={setPage}
+      />
     </div>
   )
 }

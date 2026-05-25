@@ -1,8 +1,12 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { Plus } from 'lucide-react'
+import Pagination from '@/components/ui/Pagination'
 import type { Expense } from '@/types'
+
+const PAGE_SIZE = 10
 
 const CATEGORY_LABELS: Record<string, string> = {
   combustible:   '⛽ Combustible',
@@ -28,6 +32,10 @@ export default function ExpenseList({
   vehicleId: string
   isAdmin: boolean
 }) {
+  const [page, setPage] = useState(1)
+  const totalPages = Math.ceil(expenses.length / PAGE_SIZE)
+  const paginated  = expenses.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+
   return (
     <div className="card" style={{ borderTop: '2px solid #f59e0b' }}>
       <div className="flex items-center justify-between px-5 py-4 border-b" style={{ borderColor: 'var(--border)' }}>
@@ -42,7 +50,7 @@ export default function ExpenseList({
       </div>
 
       <div className="divide-y" style={{ borderColor: 'var(--border)' }}>
-        {expenses.map((e) => (
+        {paginated.map((e) => (
           <div key={e.id} className="px-5 py-4 table-row-hover">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0 flex-1">
@@ -91,6 +99,14 @@ export default function ExpenseList({
           </p>
         )}
       </div>
+
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        totalItems={expenses.length}
+        pageSize={PAGE_SIZE}
+        onPageChange={setPage}
+      />
     </div>
   )
 }

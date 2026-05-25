@@ -1,7 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { Menu } from 'lucide-react'
+import { Toaster } from 'sonner'
+import { useTheme } from 'next-themes'
 import Sidebar from './Sidebar'
 import ThemeToggle from '@/components/ui/ThemeToggle'
 import type { Profile } from '@/types'
@@ -14,6 +17,7 @@ export default function DashboardShell({
   children: React.ReactNode
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const { theme } = useTheme()
 
   return (
     <div className="flex min-h-dvh bg-slate-50 text-slate-900 dark:bg-[#0a0f1a] dark:text-slate-100">
@@ -43,9 +47,17 @@ export default function DashboardShell({
             >
               <Menu size={15} />
             </button>
-            <span className="brand-title text-slate-900 dark:text-slate-100 lg:hidden">
+            <div className="brand-title flex items-center gap-2 text-slate-900 dark:text-slate-100 lg:hidden">
+              <Image
+                src="/LogoFlota%20Sin%20Fondo.png"
+                alt=""
+                width={0}
+                height={0}
+                sizes="100vw"
+                style={{ width: 'auto', height: '70px' }}
+              />
               FleetOps
-            </span>
+            </div>
           </div>
           <ThemeToggle />
         </header>
@@ -54,6 +66,12 @@ export default function DashboardShell({
           {children}
         </main>
       </div>
+
+      <Toaster
+        theme={theme as 'light' | 'dark' | 'system'}
+        position="bottom-right"
+        richColors
+      />
     </div>
   )
 }

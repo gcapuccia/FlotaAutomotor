@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
 import type { ExpenseCategory } from '@/types'
 import VehicleSelect from '@/components/ui/VehicleSelect'
@@ -60,6 +61,7 @@ export default function ExpenseForm({ vehicles, defaultVehicleId, userId }: Prop
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!form.vehicle_id) { setError('Seleccioná un vehículo'); return }
+    if (!form.amount || Number(form.amount) <= 0) { setError('El importe debe ser mayor a $0'); return }
     setLoading(true)
     setError(null)
 
@@ -80,6 +82,7 @@ export default function ExpenseForm({ vehicles, defaultVehicleId, userId }: Prop
       setError(error.message)
       setLoading(false)
     } else {
+      toast.success('Gasto registrado')
       router.push(defaultVehicleId ? `/vehicles/${defaultVehicleId}` : '/expenses')
       router.refresh()
     }

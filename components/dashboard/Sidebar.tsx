@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import type { Profile } from '@/types'
@@ -61,10 +62,16 @@ export default function Sidebar({ profile, isOpen, onClose }: SidebarProps) {
     >
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-200/80 px-5 py-5 dark:border-slate-800/60">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-orange-500 text-white">
-            <Car size={30} />
-          </div>
+
+          <div className="flex items-center gap-2">
+          <Image
+            src="/LogoFlota%20Sin%20Fondo.png"
+            alt="FleetOps"
+            width={0}
+            height={0}
+            sizes="100vw"
+            style={{ width: 'auto', height: '45px' }}
+          />
           <span className="brand-title text-slate-900 dark:text-slate-100">
             FleetOps
           </span>

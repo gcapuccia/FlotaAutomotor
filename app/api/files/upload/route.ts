@@ -12,11 +12,12 @@ export async function POST(request: NextRequest) {
     if (profile?.role !== 'admin') return NextResponse.json({ error: 'Sin permisos' }, { status: 403 })
 
     const formData = await request.formData()
-    const file = formData.get('file') as File
+    const file      = formData.get('file')      as File
     const vehicleId = formData.get('vehicleId') as string
+    const plate     = formData.get('plate')     as string
     const expenseId = formData.get('expenseId') as string | null
 
-    if (!file || !vehicleId) {
+    if (!file || !vehicleId || !plate) {
       return NextResponse.json({ error: 'Archivo y vehículo son requeridos' }, { status: 400 })
     }
 
@@ -25,7 +26,7 @@ export async function POST(request: NextRequest) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer())
-    const fileKey = generateFileKey(vehicleId, file.name)
+    const fileKey = generateFileKey(plate, file.name)
     await uploadFile(fileKey, buffer, file.type)
 
     const { data: dbFile, error: dbError } = await supabase

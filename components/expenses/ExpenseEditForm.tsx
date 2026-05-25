@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
+import { confirmDelete } from '@/lib/swal'
 import { createClient } from '@/lib/supabase/client'
 import type { Expense, ExpenseCategory } from '@/types'
 import VehicleSelect from '@/components/ui/VehicleSelect'
@@ -59,6 +61,7 @@ export default function ExpenseEditForm({ expense, vehicles }: Props) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!form.amount || Number(form.amount) <= 0) { setError('El importe debe ser mayor a $0'); return }
     setLoading(true)
     setError(null)
 
@@ -81,13 +84,18 @@ export default function ExpenseEditForm({ expense, vehicles }: Props) {
       setError(error.message)
       setLoading(false)
     } else {
+      toast.success('Gasto actualizado')
       router.push('/expenses')
       router.refresh()
     }
   }
 
   const handleDelete = async () => {
-    if (!confirm('¿Estás seguro que querés eliminar este gasto? Esta acción no se puede deshacer.')) return
+    const { isConfirmed } = await confirmDelete({
+      title: '¿Eliminar gasto?',
+      text: 'Esta acción no se puede deshacer.',
+    })
+    if (!isConfirmed) return
     setDeleting(true)
 
     const { error } = await supabase
@@ -99,6 +107,7 @@ export default function ExpenseEditForm({ expense, vehicles }: Props) {
       setError(error.message)
       setDeleting(false)
     } else {
+      toast.success('Gasto eliminado')
       router.push('/expenses')
       router.refresh()
     }

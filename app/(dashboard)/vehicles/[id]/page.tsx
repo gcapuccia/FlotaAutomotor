@@ -139,6 +139,7 @@ const { data: vehicle } = await supabase
           {/* Files */}
           <FileUploader
             vehicleId={id}
+            plate={vehicle.plate}
             files={files ?? []}
             isAdmin={isAdmin}
           />

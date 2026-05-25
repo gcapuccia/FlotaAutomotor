@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
 import type { Vehicle, VehicleType, VehicleStatus } from '@/types'
 
@@ -87,6 +88,18 @@ export default function VehicleForm({ vehicle }: Props) {
       vtv:          form.vtv          || null,
     }
 
+    const { data: existing } = await supabase
+      .from('vehicles')
+      .select('id')
+      .eq('plate', payload.plate)
+      .maybeSingle()
+
+    if (existing && existing.id !== vehicle?.id) {
+      setError('Ya existe un vehículo con esa patente')
+      setLoading(false)
+      return
+    }
+
     const { error } = isEdit
       ? await supabase.from('vehicles').update(payload).eq('id', vehicle!.id)
       : await supabase.from('vehicles').insert(payload)
@@ -95,6 +108,7 @@ export default function VehicleForm({ vehicle }: Props) {
       setError(error.message)
       setLoading(false)
     } else {
+      toast.success(isEdit ? 'Vehículo actualizado' : 'Vehículo creado')
       router.push('/vehicles')
       router.refresh()
     }

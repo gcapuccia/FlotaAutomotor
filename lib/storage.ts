@@ -11,10 +11,11 @@ function getClient() {
   )
 }
 
-export function generateFileKey(vehicleId: string, fileName: string): string {
+export function generateFileKey(plate: string, fileName: string): string {
   const timestamp = Date.now()
-  const sanitized = fileName.replace(/[^a-zA-Z0-9._-]/g, '_')
-  return `vehicles/${vehicleId}/${timestamp}_${sanitized}`
+  const sanitizedPlate = plate.toUpperCase().replace(/[^A-Z0-9]/g, '')
+  const sanitizedName  = fileName.replace(/[^a-zA-Z0-9._-]/g, '_')
+  return `vehicles/${sanitizedPlate}/${timestamp}_${sanitizedName}`
 }
 
 export async function uploadFile(key: string, buffer: Buffer, contentType: string): Promise<void> {

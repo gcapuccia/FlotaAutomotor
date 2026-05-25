@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
-import { Car } from 'lucide-react'
 
 export default function LoginForm() {
   const searchParams = useSearchParams()
@@ -32,21 +32,29 @@ export default function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-dvh items-center justify-center bg-slate-50 px-4 py-12 dark:bg-[#0a0f1a]">
+    <div className="login-page">
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-orange-500 text-white">
-            <Car size={20} />
-          </div>
-          <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100">FleetOps</h1>
+          <Image
+            src="/Logoflota.png"
+            alt="FleetOps"
+            width={0}
+            height={0}
+            sizes="100vw"
+            className="mx-auto mb-5 rounded-2xl"
+            style={{ width: 'auto', height: '240px' }}
+          />
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+            FleetOps
+          </h1>
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Gestión de flota vehicular
           </p>
         </div>
 
         {/* Form card */}
-        <div className="card p-6">
+        <div className="card login-card p-6">
           <h2 className="mb-5 text-sm font-semibold text-slate-900 dark:text-slate-100">
             Iniciar sesión
           </h2>

@@ -640,3 +640,73 @@ html.dark .badge-off {
   -webkit-user-select: none;
   user-select: none;
 }
+
+/* ── Login page ────────────────────────────────────────── */
+.login-page {
+  display: flex;
+  min-height: 100dvh;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(249, 115, 22, 0.12) 0%, transparent 70%),
+    #0a0f1a;
+}
+
+html:not(.dark) .login-page {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(249, 115, 22, 0.08) 0%, transparent 70%),
+    #f1f5f9;
+}
+
+.login-card {
+  box-shadow:
+    0 0 0 1px rgba(249, 115, 22, 0.08),
+    0 4px 6px -1px rgba(0, 0, 0, 0.3),
+    0 20px 40px -8px rgba(0, 0, 0, 0.5);
+}
+
+html:not(.dark) .login-card {
+  box-shadow:
+    0 0 0 1px rgba(249, 115, 22, 0.1),
+    0 4px 6px -1px rgba(0, 0, 0, 0.06),
+    0 20px 40px -8px rgba(0, 0, 0, 0.12);
+}
+
+/* ── SweetAlert2 theme ─────────────────────────────────── */
+.swal-popup {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px !important;
+  padding: 2rem !important;
+}
+.swal-title {
+  color: var(--text-primary) !important;
+  font-size: 1.1rem !important;
+  font-weight: 700 !important;
+}
+.swal-text {
+  color: var(--text-secondary) !important;
+  font-size: 0.875rem !important;
+}
+.swal-btn-confirm {
+  border-radius: 8px !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  padding: 0.5rem 1.25rem !important;
+}
+.swal-btn-cancel {
+  border-radius: 8px !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  padding: 0.5rem 1.25rem !important;
+  color: var(--text-secondary) !important;
+  border: 1px solid var(--border) !important;
+}
+.swal-btn-cancel:hover {
+  background: var(--bg-card-hover) !important;
+}
+.swal2-icon.swal2-warning {
+  border-color: #f59e0b !important;
+  color: #f59e0b !important;
+}

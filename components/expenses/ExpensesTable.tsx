@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Search, ChevronUp, ChevronDown, ArrowUpDown } from "lucide-react";
 import * as XLSX from "xlsx";
 
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 7;
 
 const CATEGORY_LABELS: Record<string, string> = {
   combustible:   "Combustible",
